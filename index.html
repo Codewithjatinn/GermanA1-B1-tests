@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deutsch Prüfung by Code with Jatin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+
+    <style>
+        :root {
+            --primary: #0A1128;
+            --accent: #FFCC00;
+            --danger: #D62246;
+            --success: #4E9F3D;
+            --bg-gradient: linear-gradient(135deg, #0A1128 0%, #1C2541 100%);
+            --card-bg: rgba(255, 255, 255, 0.06);
+            --card-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            user-select: text;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            color: #F4F5F7;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow-x: hidden;
+            width:100%;
+        }
+
+        /* Anti-Cheat Security Screen */
+        #security-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(5,10,25,0.92);
+            z-index: 99999;
+            color: #FF3333;
+            text-align: center;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            padding: 30px;
+            animation: fadeIn 0.5s ease;
+            backdrop-filter: blur(12px);
+            padding:40px;
+        }
+
+        #security-overlay h1 {
+            font-size: 2.8rem;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            animation: pulse 1.5s infinite;
+            color: #ff4d4d;
+        }
+
+        #security-overlay p {
+            font-size: 1.2rem;
+            color: #CCCCCC;
+            max-width: 600px;
+            line-height: 1.7;
+            margin-bottom: 10px;
+        }
+
+        .portal-container {
+            width: 100%;
+            max-width: 750px;
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+            animation: fadeIn 0.8s ease-in-out;
+            position: relative;
+            box-sizing:border-box;
+            overflow:hidden;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.02); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 35px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #FFF;
+        }
+
+        .header h1 span {
+            color: var(--accent);
+        }
+
+        .header p {
+            color: #A0AEC0;
+            font-size: 0.9rem;
+            margin-top: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* AI Proctoring Live Cam Interface */
+        .camera-box {
+            width: 140px;
+            height: 105px;
+            background: #000;
+            border: 2px solid var(--accent);
+            border-radius: 12px;
+            overflow: hidden;
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+        }
+        
+        .camera-box video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .camera-status {
+            position: absolute;
+            bottom: 4px;
+            left: 5px;
+            background: rgba(0,0,0,0.8);
+            color: #FFF;
+            font-size: 0.55rem;
+            padding: 2px 5px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-weight: bold;
+        }
+
+        .camera-status::before {
+            content: '';
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            background: #FF3333;
+            border-radius: 50%;
+            animation: pulse 1s infinite;
+        }
+
+        #ai-status {
+            color: var(--accent);
+            font-size: 0.85rem;
+            text-align: center;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        #exam-timer {
+            text-align: center;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #FFCC00;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        .cred-group {
+            margin-bottom: 30px;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 15px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            color: #FFF;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            margin-bottom: 15px;
+            max-width:100%;
+        }
+
+        .input-field:focus {
+            border-color: var(--accent);
+            background: rgba(255, 255, 255, 0.1);
+            outline: none;
+            box-shadow: 0 0 15px rgba(255, 204, 0, 0.2);
+        }
+
+        /* Hidden initially, appears when test starts */
+        #dynamic-questions {
+            display: none;
+        }
+
+        .question-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        .question-num {
+            font-size: 0.85rem;
+            color: var(--accent);
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .question-text {
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #FFFFFF;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 16px;
+            background: var(--accent);
+            color: var(--primary);
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-submit:hover {
+            background: #FFE066;
+            transform: translateY(-2px);
+        }
+
+        #result-screen {
+            display: none;
+            text-align: center;
+        }
+
+        .score-circle {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            border: 5px solid var(--accent);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 0 auto 25px auto;
+            background: rgba(255,255,255,0.02);
+        }
+
+        .btn-action {
+            padding: 14px 28px;
+            background: transparent;
+            color: #FFF;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            margin: 10px;
+            transition: all 0.3s;
+        }
+
+        .btn-action:hover {
+            background: #FFF;
+            color: var(--primary);
+        }
+
+        @media(max-width: 600px) {
+            body{
+                padding:10px;
+            }
+
+            .portal-container {
+                width:100%;
+                max-width:100%;
+                padding:20px 15px;
+                border-radius:18px;
+            }
+
+            .header h1 {
+                font-size:1.6rem;
+            }
+
+            .question-text {
+                font-size:1rem;
+            }
+
+            .btn-submit,
+            .btn-action,
+            .input-field {
+                width:100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="security-overlay">
+        <h1>⚠ Test Locked</h1>
+        <div style="max-width:700px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);padding:30px;border-radius:20px;backdrop-filter:blur(15px);">
+        <p>Your test has been locked because a prohibited action was detected.</p>
+        <p>Minimizing the browser, switching tabs, or using split-screen mode is not allowed during the examination.</p>
+        <p style="margin-top:15px;color:#ff8888;">This test can no longer be accessed on this device.</p>
+        </div>
+    </div>
+
+    <div class="portal-container" id="main-portal">
+        
+
+        <div class="header">
+            <h1>Deutsch <span>Prüfung</span></h1>
+            <p>Deutsch Prüfung by Code with Jatin</p>
+        </div>
+
+        <div id="ai-status">Exam Security Active</div>
+        <div id="exam-timer">60:00</div>
+
+        <div id="exam-instructions" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);padding:20px;border-radius:16px;margin-bottom:25px;">
+        <h3 style="color:#FFCC00;margin-bottom:10px;">Exam Instructions</h3>
+        <ol style="padding-left:20px;line-height:1.8;">
+        <li>Write all answers in German.</li>
+        <li>Complete all questions.</li>
+        <li>For Fill in the Blanks, write the complete sentence where required.</li>
+        <li>Do not write answers in the question section.</li>
+        <li>Focus on correct grammar, articles, word order, Relativsätze and Reflexive Verben.</li>
+        <li>The exam duration is 60 minutes. The test will auto-submit when the timer ends.</li>
+        </ol>
+        </div>
+
+        <form id="quiz-form" onsubmit="handleFormAction(event)">
+            
+            <div class="cred-group" id="credentials-section">
+                <input type="text" id="student-name" class="input-field" placeholder="Student Full Name *" required autocomplete="off">
+                <input type="text" id="batch-Time" class="input-field" placeholder="Batch Time *" required autocomplete="off">
+            </div>
+
+            <div id="dynamic-questions">
+                <div class="question-card" style="border:2px solid #FFCC00;background:rgba(255,204,0,0.08);">
+                    <div class="question-text">Part A – Translate into German</div>
+                    <p>Translate the following English sentences into German.</p>
+                </div>
+                <div class="question-card" data-qnum="1" data-answer="Meine Lieblingsjahreszeit ist der Sommer.">
+                    <div class="question-num">Question 1</div>
+                    <div class="question-text">My favorite season is summer.</div>
+                    <input type="text" class="input-field student-ans" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+                <div class="question-card" data-qnum="2" data-answer="Deutschland liegt in Europa.">
+                    <div class="question-num">Question 2</div>
+                    <div class="question-text">Germany is in Europe.</div>
+                    <input type="text" class="input-field student-ans" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+                <div class="question-card" data-qnum="3" data-answer="Ich stehe um 7 Uhr auf.">
+                    <div class="question-num">Question 3</div>
+                    <div class="question-text">I wake up at 7 o'clock.</div>
+                    <input type="text" class="input-field student-ans" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+                <div class="question-card" data-qnum="4" data-answer="Ich lerne Deutsch.">
+                    <div class="question-num">Question 4</div>
+                    <div class="question-text">I am learning German.</div>
+                    <input type="text" class="input-field student-ans" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+                <div class="question-card" data-qnum="5" data-answer="Ich heiße Anna.">
+                    <div class="question-num">Question 5</div>
+                    <div class="question-text">My name is Anna.</div>
+                    <input type="text" class="input-field student-ans" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+                <div class="question-card" data-qnum="6" data-answer="Ich bin 25 Jahre alt.">
+                    <div class="question-num">Question 6</div>
+                    <div class="question-text">I am 25 years old.</div>
+                    <input type="text" class="input-field student-ans" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+                <div class="question-card" data-qnum="7" data-answer="Ich wohne in Berlin.">
+                    <div class="question-num">Question 7</div>
+                    <div class="question-text">I live in Berlin.</div>
+                    <input type="text" class="input-field student-ans" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+                <div class="question-card" data-qnum="8" data-answer="Ich komme aus Indien.">
+                    <div class="question-num">Question 8</div>
+                    <div class="question-text">I come from India.</div>
+                    <input type="text" class="input-field student-ans" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+                <div class="question-card" data-qnum="9" data-answer="Ich arbeite als Lehrer.">
+                    <div class="question-num">Question 9</div>
+                    <div class="question-text">I work as a teacher.</div>
+                    <input type="text" class="input-field student-ans" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+                <div class="question-card" data-qnum="10" data-answer="Ich spreche Englisch und Deutsch.">
+                    <div class="question-num">Question 10</div>
+                    <div class="question-text">I speak English and German.</div>
+                    <input type="text" class="input-field student-ans" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+                <div class="question-card" style="border:2px solid #FFCC00;background:rgba(255,204,0,0.08);">
+                    <div class="question-text">Part B – Fill in the Blanks (Articles)</div>
+                    <p>Choose and write the correct article. Write the complete answer.</p>
+                </div>
+                <div class="question-card" data-qnum="11" data-answer="Ich habe einen Hund.">
+                    <div class="question-num">Question 11</div>
+                    <div class="question-text">I have a dog.</div>
+                    <input type="text" class="input-field student-ans" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+                <div class="question-card" data-qnum="12" data-answer="Ich mag Pizza.">
+                    <div class="question-num">Question 12</div>
+                    <div class="question-text">I like pizza.</div>
+                    <input type="text" class="input-field student-ans" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+                <div class="question-card" data-qnum="13" data-answer="Ich trinke Wasser.">
+                    <div class="question-num">Question 13</div>
+                    <div class="question-text">I drink water.</div>
+                    <input type="text" class="input-field student-ans" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+                <div class="question-card" data-qnum="14" data-answer="Ich lese ein Buch.">
+                    <div class="question-num">Question 14</div>
+                    <div class="question-text">I am reading a book.</div>
+                    <input type="text" class="input-field student-ans" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+                <div class="question-card" data-qnum="15" data-answer="Ich fahre mit dem Bus.">
+                    <div class="question-num">Question 15</div>
+                    <div class="question-text">I go by bus.</div>
+                    <input type="text" class="input-field student-ans" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+                <div class="question-card" style="border:2px solid #FFCC00;background:rgba(255,204,0,0.08);">
+                    <div class="question-text">Part C – Modalverben</div>
+                    <p>Use the correct modal verb form.</p>
+                </div>
+                <div class="question-card" data-qnum="16" data-answer="Ich gehe zur Schule.">
+                    <div class="question-num">Question 16</div>
+                    <div class="question-text">I go to school.</div>
+                    <input type="text" class="input-field student-ans" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+                <div class="question-card" data-qnum="17" data-answer="Ich esse Frühstück.">
+                    <div class="question-num">Question 17</div>
+                    <div class="question-text">I eat breakfast.</div>
+                    <input type="text" class="input-field student-ans" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+                <div class="question-card" data-qnum="18" data-answer="Ich spiele Fußball.">
+                    <div class="question-num">Question 18</div>
+                    <div class="question-text">I play football.</div>
+                    <input type="text" class="input-field student-ans" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+                <div class="question-card" data-qnum="19" data-answer="Ich höre Musik.">
+                    <div class="question-num">Question 19</div>
+                    <div class="question-text">I listen to music.</div>
+                    <input type="text" class="input-field student-ans" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+                <div class="question-card" data-qnum="20" data-answer="Ich sehe fern.">
+                    <div class="question-num">Question 20</div>
+                    <div class="question-text">I watch TV.</div>
+                    <input type="text" class="input-field student-ans" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+                <div class="question-card" style="border:2px solid #FFCC00;background:rgba(255,204,0,0.08);">
+                    <div class="question-text">Part D – Possessivartikel</div>
+                    <p>Use the correct possessive article.</p>
+                </div>
+                <div class="question-card" data-qnum="21" data-answer="Ich schreibe einen Brief.">
+                    <div class="question-num">Question 21</div>
+                    <div class="question-text">I write a letter.</div>
+                    <input type="text" class="input-field student-ans" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+                <div class="question-card" data-qnum="22" data-answer="Ich telefoniere mit meiner Mutter.">
+                    <div class="question-num">Question 22</div>
+                    <div class="question-text">I phone my mother.</div>
+                    <input type="text" class="input-field student-ans" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+                <div class="question-card" data-qnum="23" data-answer="Ich kaufe im Supermarkt ein.">
+                    <div class="question-num">Question 23</div>
+                    <div class="question-text">I shop in the supermarket.</div>
+                    <input type="text" class="input-field student-ans" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+                <div class="question-card" data-qnum="24" data-answer="Ich koche gern.">
+                    <div class="question-num">Question 24</div>
+                    <div class="question-text">I like to cook.</div>
+                    <input type="text" class="input-field student-ans" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+                <div class="question-card" data-qnum="25" data-answer="Ich schwimme im Schwimmbad.">
+                    <div class="question-num">Question 25</div>
+                    <div class="question-text">I swim in the swimming pool.</div>
+                    <input type="text" class="input-field student-ans" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+                <div class="question-card" style="border:2px solid #FFCC00;background:rgba(255,204,0,0.08);">
+                    <div class="question-text">Part E – Dativ</div>
+                    <p>Write the correct Dativ form.</p>
+                </div>
+                <div class="question-card" data-qnum="26" data-answer="Ich gehe ins Kino.">
+                    <div class="question-num">Question 26</div>
+                    <div class="question-text">I go to the cinema.</div>
+                    <input type="text" class="input-field student-ans" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+                <div class="question-card" data-qnum="27" data-answer="Ich besuche meine Freunde.">
+                    <div class="question-num">Question 27</div>
+                    <div class="question-text">I visit my friends.</div>
+                    <input type="text" class="input-field student-ans" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+                <div class="question-card" data-qnum="28" data-answer="Ich mache meine Hausaufgaben.">
+                    <div class="question-num">Question 28</div>
+                    <div class="question-text">I do my homework.</div>
+                    <input type="text" class="input-field student-ans" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+                <div class="question-card" data-qnum="29" data-answer="Ich putze mein Zimmer.">
+                    <div class="question-num">Question 29</div>
+                    <div class="question-text">I clean my room.</div>
+                    <input type="text" class="input-field student-ans" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+                <div class="question-card" data-qnum="30" data-answer="Ich gehe spazieren.">
+                    <div class="question-num">Question 30</div>
+                    <div class="question-text">I go for a walk.</div>
+                    <input type="text" class="input-field student-ans" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+                <div class="question-card" style="border:2px solid #FFCC00;background:rgba(255,204,0,0.08);">
+                    <div class="question-text">Part F – Trennbare Verben</div>
+                    <p>Use the correct separable verb form and write the full sentence.</p>
+                </div>
+                <div class="question-card" data-qnum="31" data-answer="Ich lerne für die Prüfung.">
+                    <div class="question-num">Question 31</div>
+                    <div class="question-text">I study for the exam.</div>
+                    <input type="text" class="input-field student-ans" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+                <div class="question-card" data-qnum="32" data-answer="Ich mache Sport.">
+                    <div class="question-num">Question 32</div>
+                    <div class="question-text">I do sports.</div>
+                    <input type="text" class="input-field student-ans" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+                <div class="question-card" data-qnum="33" data-answer="Ich fahre Fahrrad.">
+                    <div class="question-num">Question 33</div>
+                    <div class="question-text">I ride a bicycle.</div>
+                    <input type="text" class="input-field student-ans" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+                <div class="question-card" data-qnum="34" data-answer="Ich gehe einkaufen.">
+                    <div class="question-num">Question 34</div>
+                    <div class="question-text">I go shopping.</div>
+                    <input type="text" class="input-field student-ans" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+                <div class="question-card" data-qnum="35" data-answer="Ich spiele Gitarre.">
+                    <div class="question-num">Question 35</div>
+                    <div class="question-text">I play guitar.</div>
+                    <input type="text" class="input-field student-ans" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+                <div class="question-card" style="border:2px solid #FFCC00;background:rgba(255,204,0,0.08);">
+                    <div class="question-text">Part G – Perfekt</div>
+                    <p>Complete the sentence in Perfekt.</p>
+                </div>
+                <div class="question-card" data-qnum="36" data-answer="Ich male ein Bild.">
+                    <div class="question-num">Question 36</div>
+                    <div class="question-text">I paint a picture.</div>
+                    <input type="text" class="input-field student-ans" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+                <div class="question-card" data-qnum="37" data-answer="Ich tanze gern.">
+                    <div class="question-num">Question 37</div>
+                    <div class="question-text">I like dancing.</div>
+                    <input type="text" class="input-field student-ans" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+                <div class="question-card" data-qnum="38" data-answer="Ich spiele Schach.">
+                    <div class="question-num">Question 38</div>
+                    <div class="question-text">I play chess.</div>
+                    <input type="text" class="input-field student-ans" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+                <div class="question-card" data-qnum="39" data-answer="Ich gehe früh ins Bett.">
+                    <div class="question-num">Question 39</div>
+                    <div class="question-text">I go to bed early.</div>
+                    <input type="text" class="input-field student-ans" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+                <div class="question-card" data-qnum="40" data-answer="Ich stehe spät auf.">
+                    <div class="question-num">Question 40</div>
+                    <div class="question-text">I get up late.</div>
+                    <input type="text" class="input-field student-ans" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+                <div class="question-card" style="border:2px solid #FFCC00;background:rgba(255,204,0,0.08);">
+                    <div class="question-text">Part H – Futur I</div>
+                    <p>Write the sentence in Futur I.</p>
+                </div>
+                <div class="question-card" data-qnum="41" data-answer="Mein Lieblingsessen ist Pizza.">
+                    <div class="question-num">Question 41</div>
+                    <div class="question-text">My favorite food is pizza.</div>
+                    <input type="text" class="input-field student-ans" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+                <div class="question-card" data-qnum="42" data-answer="Mein Lieblingsgetränk ist Wasser.">
+                    <div class="question-num">Question 42</div>
+                    <div class="question-text">My favorite drink is water.</div>
+                    <input type="text" class="input-field student-ans" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+                <div class="question-card" data-qnum="43" data-answer="Mein Lieblingssport ist Fußball.">
+                    <div class="question-num">Question 43</div>
+                    <div class="question-text">My favorite sport is football.</div>
+                    <input type="text" class="input-field student-ans" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+                <div class="question-card" data-qnum="44" data-answer="Meine Lieblingsfarbe ist blau.">
+                    <div class="question-num">Question 44</div>
+                    <div class="question-text">My favorite color is blue.</div>
+                    <input type="text" class="input-field student-ans" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+                <div class="question-card" data-qnum="45" data-answer="Mein Lieblingstier ist der Hund.">
+                    <div class="question-num">Question 45</div>
+                    <div class="question-text">My favorite animal is the dog.</div>
+                    <input type="text" class="input-field student-ans" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+                <div class="question-card" style="border:2px solid #FFCC00;background:rgba(255,204,0,0.08);">
+                    <div class="question-text">Part I – Reflexive Verben</div>
+                    <p>Answer using the correct reflexive verb form.</p>
+                </div>
+                <div class="question-card" data-qnum="46" data-answer="Ich habe einen Bruder.">
+                    <div class="question-num">Question 46</div>
+                    <div class="question-text">I have a brother.</div>
+                    <input type="text" class="input-field student-ans" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+                <div class="question-card" data-qnum="47" data-answer="Ich habe eine Schwester.">
+                    <div class="question-num">Question 47</div>
+                    <div class="question-text">I have a sister.</div>
+                    <input type="text" class="input-field student-ans" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+                <div class="question-card" data-qnum="48" data-answer="Ich habe keine Geschwister.">
+                    <div class="question-num">Question 48</div>
+                    <div class="question-text">I have no siblings.</div>
+                    <input type="text" class="input-field student-ans" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+                <div class="question-card" data-qnum="49" data-answer="Meine Mutter ist Lehrerin.">
+                    <div class="question-num">Question 49</div>
+                    <div class="question-text">My mother is a teacher.</div>
+                    <input type="text" class="input-field student-ans" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+                <div class="question-card" data-qnum="50" data-answer="Mein Vater ist Ingenieur.">
+                    <div class="question-num">Question 50</div>
+                    <div class="question-text">My father is an engineer.</div>
+                    <input type="text" class="input-field student-ans" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+                <div class="question-card" data-qnum="51" data-answer="Meine Eltern wohnen in Hamburg.">
+                    <div class="question-num">Question 51</div>
+                    <div class="question-text">My parents live in Hamburg.</div>
+                    <input type="text" class="input-field student-ans" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+                <div class="question-card" data-qnum="52" data-answer="Ich habe viele Freunde.">
+                    <div class="question-num">Question 52</div>
+                    <div class="question-text">I have many friends.</div>
+                    <input type="text" class="input-field student-ans" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+                <div class="question-card" data-qnum="53" data-answer="Mein bester Freund heißt Max.">
+                    <div class="question-num">Question 53</div>
+                    <div class="question-text">My best friend is called Max.</div>
+                    <input type="text" class="input-field student-ans" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+                <div class="question-card" data-qnum="54" data-answer="Wir gehen zusammen zur Schule.">
+                    <div class="question-num">Question 54</div>
+                    <div class="question-text">We go to school together.</div>
+                    <input type="text" class="input-field student-ans" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+                <div class="question-card" data-qnum="55" data-answer="Wir spielen oft zusammen.">
+                    <div class="question-num">Question 55</div>
+                    <div class="question-text">We often play together.</div>
+                    <input type="text" class="input-field student-ans" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+                <div class="question-card" style="border:2px solid #FFCC00;background:rgba(255,204,0,0.08);">
+                    <div class="question-text">Part J – Relativsätze</div>
+                    <p>Complete the sentence using the correct relative pronoun.</p>
+                </div>
+                <div class="question-card" data-qnum="56" data-answer="Ich esse gern Eis.">
+                    <div class="question-num">Question 56</div>
+                    <div class="question-text">I like eating ice cream.</div>
+                    <input type="text" class="input-field student-ans" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+                <div class="question-card" data-qnum="57" data-answer="Ich trinke gern Saft.">
+                    <div class="question-num">Question 57</div>
+                    <div class="question-text">I like drinking juice.</div>
+                    <input type="text" class="input-field student-ans" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+                <div class="question-card" data-qnum="58" data-answer="Ich esse kein Fleisch.">
+                    <div class="question-num">Question 58</div>
+                    <div class="question-text">I do not eat meat.</div>
+                    <input type="text" class="input-field student-ans" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+                <div class="question-card" data-qnum="59" data-answer="Ich bin Vegetarier.">
+                    <div class="question-num">Question 59</div>
+                    <div class="question-text">I am a vegetarian.</div>
+                    <input type="text" class="input-field student-ans" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+                <div class="question-card" data-qnum="60" data-answer="Ich habe Hunger.">
+                    <div class="question-num">Question 60</div>
+                    <div class="question-text">I am hungry.</div>
+                    <input type="text" class="input-field student-ans" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+                <div class="question-card" data-qnum="61" data-answer="Ich habe Durst.">
+                    <div class="question-num">Question 61</div>
+                    <div class="question-text">I am thirsty.</div>
+                    <input type="text" class="input-field student-ans" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+                <div class="question-card" data-qnum="62" data-answer="Ich gehe ins Restaurant.">
+                    <div class="question-num">Question 62</div>
+                    <div class="question-text">I go to the restaurant.</div>
+                    <input type="text" class="input-field student-ans" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+                <div class="question-card" data-qnum="63" data-answer="Ich bestelle eine Pizza.">
+                    <div class="question-num">Question 63</div>
+                    <div class="question-text">I order a pizza.</div>
+                    <input type="text" class="input-field student-ans" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+                <div class="question-card" data-qnum="64" data-answer="Ich bezahle die Rechnung.">
+                    <div class="question-num">Question 64</div>
+                    <div class="question-text">I pay the bill.</div>
+                    <input type="text" class="input-field student-ans" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+                <div class="question-card" data-qnum="65" data-answer="Das Essen schmeckt gut.">
+                    <div class="question-num">Question 65</div>
+                    <div class="question-text">The food tastes good.</div>
+                    <input type="text" class="input-field student-ans" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+                <div class="question-card" style="border:2px solid #FFCC00;background:rgba(255,204,0,0.08);">
+                    <div class="question-text">Part K – Mixed Grammar</div>
+                    <p>Answer according to the grammar instruction in each question.</p>
+                </div>
+                <div class="question-card" data-qnum="66" data-answer="Ich habe keine Zeit.">
+                    <div class="question-num">Question 66</div>
+                    <div class="question-text">I have no time.</div>
+                    <input type="text" class="input-field student-ans" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+                <div class="question-card" data-qnum="67" data-answer="Kannst du mir helfen?">
+                    <div class="question-num">Question 67</div>
+                    <div class="question-text">Can you help me?</div>
+                    <input type="text" class="input-field student-ans" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+                <div class="question-card" data-qnum="68" data-answer="Ich gehe heute nicht zur Arbeit.">
+                    <div class="question-num">Question 68</div>
+                    <div class="question-text">I am not going to work today.</div>
+                    <input type="text" class="input-field student-ans" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+                <div class="question-card" data-qnum="69" data-answer="Wir fahren mit dem Zug.">
+                    <div class="question-num">Question 69</div>
+                    <div class="question-text">We are going by train.</div>
+                    <input type="text" class="input-field student-ans" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+                <div class="question-card" data-qnum="70" data-answer="Ich wohne seit drei Jahren in Deutschland.">
+                    <div class="question-num">Question 70</div>
+                    <div class="question-text">I have been living in Germany for three years.</div>
+                    <input type="text" class="input-field student-ans" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+                <div class="question-card" data-qnum="71" data-answer="Das Wetter ist heute schön.">
+                    <div class="question-num">Question 71</div>
+                    <div class="question-text">The weather is nice today.</div>
+                    <input type="text" class="input-field student-ans" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+                <div class="question-card" data-qnum="72" data-answer="Ich esse gern Obst.">
+                    <div class="question-num">Question 72</div>
+                    <div class="question-text">I like eating fruit.</div>
+                    <input type="text" class="input-field student-ans" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+                <div class="question-card" data-qnum="73" data-answer="Mein Lieblingsfach ist Mathematik.">
+                    <div class="question-num">Question 73</div>
+                    <div class="question-text">My favorite subject is mathematics.</div>
+                    <input type="text" class="input-field student-ans" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+                <div class="question-card" data-qnum="74" data-answer="Ich habe heute Geburtstag.">
+                    <div class="question-num">Question 74</div>
+                    <div class="question-text">Today is my birthday.</div>
+                    <input type="text" class="input-field student-ans" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+                <div class="question-card" data-qnum="75" data-answer="Ich spiele gern Tennis.">
+                    <div class="question-num">Question 75</div>
+                    <div class="question-text">I like playing tennis.</div>
+                    <input type="text" class="input-field student-ans" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+            </div>
+
+            <button type="submit" id="main-cta-btn" class="btn-submit">Start Exam</button>
+        </form>
+
+        <div id="result-screen">
+            <h2 style="font-size: 2rem; margin-bottom: 10px;">Evaluation Completed</h2>
+            <p style="color: #A0AEC0; margin-bottom: 30px;">Your responses have been securely computed.</p>
+            
+            <div class="score-circle" id="score-display">0 / 0</div>
+
+            <div style="margin-top: 30px;">
+                <button class="btn-action" onclick="downloadEvaluationTXT()">Download Evaluation Report (TXT)</button>
+                <button class="btn-action" onclick="sendEmailReport()">Redirect to Mail & Send Score</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const targetEmail = "jatiaanbaha@gmail.com";
+        let finalScoreString = "";
+        let globalTextReport = "";
+        
+        let isDeviceBanned = false;
+        let isTestStarted = false;
+        let isTestEnded = false;
+        let examTimerInterval = null;
+        let remainingSeconds = 3600;
+        const EXAM_DURATION_SECONDS = 3600;
+
+window.addEventListener('DOMContentLoaded', () => {
+    if (localStorage.getItem('test_locked_device') === 'true') {
+        triggerLockout();
+        return;
+    }
+
+    document.getElementById('ai-status').innerText = 'Exam Security Active';
+});
+
+        function triggerLockout() {
+            isTestEnded = true;
+            localStorage.setItem('test_locked_device', 'true');
+            document.getElementById('main-portal').style.display = 'none';
+            document.getElementById('security-overlay').style.display = 'flex';
+        }
+
+        // Active Anti-Cheat Listeners - Only trigger if the exam has officially started
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden && isTestStarted && !isTestEnded) {
+                localStorage.setItem('test_locked_device', 'true');
+                triggerLockout();
+            }
+        });
+
+        window.addEventListener('blur', () => {
+            // Ignore normal browser focus changes
+        });
+
+        window.addEventListener('resize', () => {
+            if (isTestStarted && !isTestEnded) {
+                const widthRatio = window.innerWidth / window.screen.width;
+                if (widthRatio < 0.85) {
+                    localStorage.setItem('test_locked_device', 'true');
+                    triggerLockout();
+                }
+            }
+        });
+
+        function startExamTimer() {
+            const timerEl = document.getElementById('exam-timer');
+            timerEl.style.display = 'block';
+
+            examTimerInterval = setInterval(() => {
+                if (isTestEnded) {
+                    clearInterval(examTimerInterval);
+                    return;
+                }
+
+                const mins = Math.floor(remainingSeconds / 60);
+                const secs = remainingSeconds % 60;
+
+                timerEl.innerText = `${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}`;
+
+                if (remainingSeconds <= 0) {
+                    clearInterval(examTimerInterval);
+                    finishAndEvaluate();
+                    return;
+                }
+
+                remainingSeconds--;
+            }, 1000);
+        }
+
+        // Handles multi-stage form action transitions (Start Exam -> Submit Exam)
+        function handleFormAction(event) {
+            event.preventDefault();
+            
+            if (isDeviceBanned) {
+                triggerLockout();
+                return;
+            }
+
+            if (!isTestStarted) {
+                // Transition into Live Active Test mode
+                startExamTimer();
+                setTimeout(() => {
+                    isTestStarted = true;
+                }, 1500);
+                document.getElementById('credentials-section').style.pointerEvents = 'none';
+                document.getElementById('dynamic-questions').style.display = 'block';
+                
+                const statusEl = document.getElementById('ai-status');
+                statusEl.innerText = "TEST IS LIVE: Anti-Cheat Protection Active.";
+                statusEl.style.color = "#4E9F3D";
+                
+                const ctaBtn = document.getElementById('main-cta-btn');
+                ctaBtn.innerText = "Submit Evaluation";
+                ctaBtn.style.background = "#4E9F3D";
+                ctaBtn.style.color = "#FFF";
+            } else {
+                // Trigger compilation engine if user clicks submit on live exam
+                finishAndEvaluate();
+            }
+        }
+
+        // Levenshtein Text Comparison Scoring System
+        function getSimilarityScore(s1, s2) {
+            let longer = s1.toLowerCase().trim();
+            let shorter = s2.toLowerCase().trim();
+            if (longer.length < shorter.length) { let tmp = longer; longer = shorter; shorter = tmp; }
+            let longerLength = longer.length;
+            if (longerLength === 0) { return 1.0; }
+            return (longerLength - editDistance(longer, shorter)) / parseFloat(longerLength);
+        }
+
+        function editDistance(s1, s2) {
+            let costs = [];
+            for (let i = 0; i <= s1.length; i++) {
+                let lastValue = i;
+                for (let j = 0; j <= s2.length; j++) {
+                    if (i == 0) costs[j] = j;
+                    else {
+                        if (j > 0) {
+                            let newValue = costs[j - 1];
+                            if (s1.charAt(i - 1) != s2.charAt(j - 1))
+                                newValue = Math.min(Math.min(newValue, lastValue), costs[j]) + 1;
+                            costs[j - 1] = lastValue;
+                            lastValue = newValue;
+                        }
+                    }
+                }
+                if (i > 0) costs[s2.length] = lastValue;
+            }
+            return costs[s2.length];
+        }
+
+        // Evaluation compiler execution
+        function finishAndEvaluate() {
+            isTestEnded = true;
+            const timeTakenSeconds = EXAM_DURATION_SECONDS - remainingSeconds;
+            const minutesTaken = Math.floor(timeTakenSeconds / 60);
+            const secondsTaken = timeTakenSeconds % 60;
+            window.examTimeTaken = `${minutesTaken}m ${secondsTaken}s`;
+            if (examTimerInterval) {
+                clearInterval(examTimerInterval);
+            }
+
+            const studentName = document.getElementById('student-name').value.trim();
+            const batchNo = document.getElementById('batch-Time').value.trim();
+
+            const cards = document.querySelectorAll('.question-card[data-qnum]');
+            let score = 0;
+            let totalQuestions = cards.length;
+            
+            let reportData = `==================================================\n`;
+            reportData += `    DEUTSCH PRÜFUNG BY CODE WITH JATIN REPORT\n`;
+            reportData += `==================================================\n`;
+            reportData += `Student Name : ${studentName}\n`;
+            reportData += `Batch Number : ${batchNo}\n`;
+            reportData += `Date Time    : ${new Date().toLocaleString()}\n`;
+            reportData += `Time Taken   : ${window.examTimeTaken || '0m 0s'}\n`;
+            reportData += `--------------------------------------------------\n\n`;
+
+            cards.forEach((card) => {
+                let qNum = card.getAttribute('data-qnum');
+                let qText = card.querySelector('.question-text').innerText;
+                let realAns = card.getAttribute('data-answer');
+                let userAns = card.querySelector('.student-ans').value.trim();
+
+                let matchRatio = getSimilarityScore(realAns, userAns);
+                let isCorrect = matchRatio >= 0.85;
+
+                if (isCorrect) score++;
+
+                reportData += `Question ${qNum}: ${qText}\n`;
+                reportData += `Student Answer  : ${userAns || "[No Answer Entered]"}\n`;
+                reportData += `Expected Correct: ${realAns}\n`;
+                reportData += `AI Match Score  : ${Math.round(matchRatio * 100)}%\n`;
+                reportData += `Status          : ${isCorrect ? 'CORRECT' : 'INCORRECT'}\n`;
+                reportData += `--------------------------------------------------\n`;
+            });
+
+            finalScoreString = `${score} Out of ${totalQuestions}`;
+            reportData += `\nFINAL COMPUTED RESULT: ${finalScoreString}\n`;
+            reportData += `==================================================\n`;
+
+            globalTextReport = reportData;
+
+            document.getElementById('quiz-form').style.display = 'none';
+            document.getElementById('score-display').innerText = `${score} / ${totalQuestions}`;
+            document.getElementById('result-screen').style.display = 'block';
+
+            // Test completed successfully - do not lock device
+            isDeviceBanned = false;
+        }
+
+        function downloadEvaluationTXT() {
+            const blob = new Blob([globalTextReport], { type: "text/plain;charset=utf-8" });
+            const link = document.createElement("a");
+            const name = document.getElementById('student-name').value.replace(/\s+/g, '_');
+            link.href = URL.createObjectURL(blob);
+            link.download = `German_Test_${name}.txt`;
+            link.click();
+        }
+
+        function sendEmailReport() {
+            const sName = document.getElementById('student-name').value;
+            const bNo = document.getElementById('batch-Time').value;
+            const subject = encodeURIComponent(`German Exam Result: ${sName} (Batch ${bNo})`);
+            const body = encodeURIComponent(`Hello Sir,\n\nI have completed my German exam via your automated portal.\n\nDetails:\n- Student: ${sName}\n- Batch: ${bNo}\n- Time Taken: ${window.examTimeTaken || '0m 0s'}\n\nFinal Verified Score: ${finalScoreString}\n\nThank you.`);
+            
+            window.location.href = `mailto:${targetEmail}?subject=${subject}&body=${body}`;
+        }
+    </script>
+</body>
+</html>
